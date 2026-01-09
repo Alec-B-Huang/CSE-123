@@ -27,7 +27,7 @@ public class QueryCracker {
         System.out.println("Search results ready. Unlock with key...");
         
         System.setOut(new PrintStream(new OutputStream() { public void write(int b) {} }));
-        unlock("00000");    // TODO: Find the code, hurry!
+        unlock("2c52d");    // TODO: Find the code, hurry!
         System.setOut(SYSTEM_OUT);
         
         System.out.println("Key found! Search results unlocked!");
