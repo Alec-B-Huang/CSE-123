@@ -65,7 +65,16 @@ public class SearchClient {
 
     // TODO: Write and document your search method here
     public static Set<Media> search(Map<String, Set<Media>> index, String query) {
-        return new TreeSet<>();
+        TreeSet<Media> querySet = new TreeSet<>();
+        String queryWordLower = query.toLowerCase();
+
+        if (index.keySet().contains(queryWordLower)) {
+            for (Media doc : index.get(queryWordLower)) {
+                querySet.add(doc);
+            }
+        }
+
+        return querySet;
     }
     
     // Allows the user to search a specific query using the provided 'index' to find appropriate
