@@ -17,8 +17,26 @@ public class InvertedIndex {
         System.out.println(result);
     }
 
-    // TODO: Write and document your createIndex method here
     public static Map<String, Set<Media>> createIndex(List<Media> docs) {
+        Map<String, Set<Media>> invertedIndex = new TreeMap<>();
+
+        for (Media doc : docs) {
+            List<String> words = doc.getContent();
+
+            for (String word : words) {
+
+                String wordLower = word.toLowerCase();
+                if (!invertedIndex.keySet().contains(wordLower)) {
+                    invertedIndex.put(wordLower, new HashSet<>());
+                    invertedIndex.get(wordLower).add(doc);
+
+                } else {
+                    invertedIndex.get(wordLower).add(doc);
+                }
+            }
+        }
+
+        return invertedIndex;
         
     }
 }
