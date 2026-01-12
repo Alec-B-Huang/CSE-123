@@ -1,7 +1,10 @@
 import java.io.*;
 import java.util.*;
 // Name: Alec Huang
-// Date: 01/10/26
+// Date: 01/11/26
+// TA: ISHITA MUNDRA
+// CSE 123
+// C0
 
 // This class allows users to find and rate books within BOOK_DIRECTORY
 // containing certain terms
@@ -39,7 +42,14 @@ public class SearchClient {
         System.out.println("See you next time!");
     }
 
-    // TODO: Paste createIndex implementation & comment
+    // BEHAVIOR: 
+    //      creates a map of items in which each word is matched to the media titles
+    //      that they appear in.
+    // EXCEPTIONS: None
+    // RETURNS: 
+    //      invertedIndex - a map from each word to the set of media whose content contains it.
+    // PARAMETERS: 
+    //      docs - a list of media titles.
     public static Map<String, Set<Media>> createIndex(List<Media> docs) {
         Map<String, Set<Media>> invertedIndex = new TreeMap<>();
 
@@ -60,10 +70,17 @@ public class SearchClient {
         }
 
         return invertedIndex;
-
     }
 
-    // TODO: Write and document your search method here
+    // BEHAVIOR:
+    //      searches for the query word in the index map and adds the contents
+    //      to a set if the word exists in the map.
+    // EXCEPTIONS: None
+    // RETURNS: 
+    //      querySet - a set of media whose contents contain the query. 
+    // PARAMETERS:
+    //      index - a map from words to set of media containing the word.
+    //      query - word being looked up in query
     public static Set<Media> search(Map<String, Set<Media>> index, String query) {
         TreeSet<Media> querySet = new TreeSet<>();
         String queryWordLower = query.toLowerCase();
