@@ -1,5 +1,13 @@
 import java.util.*;
 
+// Name: Alec Huang
+// Date: 01/11/26
+// TA: ISHITA MUNDRA
+// CSE 123
+// C0
+
+// Class Comment: Represents a search tool that builds an inverted index 
+// that maps words to the media items whose content contains those words.
 public class InvertedIndex {
     public static void main(String[] args) {
         List<Media> docs = List.of(
@@ -17,6 +25,14 @@ public class InvertedIndex {
         System.out.println(result);
     }
 
+    // BEHAVIOR: 
+    //      creates a map of items in which each word is matched to the media titles
+    //      that they appear in.
+    // EXCEPTIONS: None
+    // RETURNS: 
+    //      invertedIndex - a map from each word to the set of media whose content contains it.
+    // PARAMETERS: 
+    //      docs - a list of media titles.
     public static Map<String, Set<Media>> createIndex(List<Media> docs) {
         Map<String, Set<Media>> invertedIndex = new TreeMap<>();
 
