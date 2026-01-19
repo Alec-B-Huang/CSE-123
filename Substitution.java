@@ -1,9 +1,8 @@
-// TODO: Write your implementation to Subsitution here!
-
 // Alec Huang
 // CSE 123 
 // P0
-// TA:
+// TA: Ishita
+
 import java.util.*;
 
 public class Substitution extends Cipher {
@@ -49,11 +48,33 @@ public class Substitution extends Cipher {
 
     @Override
     public String encrypt(String input) {
-        return null;
+        if (hasEncoding == false) {
+            throw new IllegalStateException();
+        }
+
+        String result = "";
+        for (int i = 0; i < input.length(); i++) {
+            int charIndex = Cipher.VALID_CHARS.indexOf(input.charAt(i));
+            Character encodedChar = encoding.charAt(charIndex);
+            result = result + encodedChar;
+        }
+
+        return result;
     }
 
     @Override
     public String decrypt(String input) {
-        return null;    
+        if (hasEncoding == false) {
+            throw new IllegalStateException();
+        }
+
+        String result = "";
+        for (int i = 0; i < input.length(); i++) {
+            int charIndex = encoding.indexOf(input.charAt(i));
+            Character encodedChar = Cipher.VALID_CHARS.charAt(charIndex);
+            result = result + encodedChar;
+        }
+        
+        return result;
     }
 }
