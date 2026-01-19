@@ -48,6 +48,10 @@ public class Substitution extends Cipher {
 
     @Override
     public String encrypt(String input) {
+        if (input == null) {
+            throw new IllegalArgumentException();
+        }
+
         if (hasEncoding == false) {
             throw new IllegalStateException();
         }
@@ -64,6 +68,10 @@ public class Substitution extends Cipher {
 
     @Override
     public String decrypt(String input) {
+        if (input == null) {
+            throw new IllegalArgumentException();
+        }
+        
         if (hasEncoding == false) {
             throw new IllegalStateException();
         }
