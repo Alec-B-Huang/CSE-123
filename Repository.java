@@ -1,13 +1,27 @@
+// ALEC HUANG
+// 2/01/26
+// CSE 123
+// P1
+// TA: Ishta Mundra
+
 import java.util.*;
 import java.text.SimpleDateFormat;
 
+// Class Comment: represents a repository that stores and manages
+// a history of commits, allowing commits to be added, removed, etc.
 public class Repository {
     private String name;
     private Commit head;
     private int size;
 
+    // BEHAVIOR: constructs a repository with given name
+    // EXCEPTIONS: IllegalArgumentException
+    //              if name is null
+    //              if name is empty
+    // RETURNS: none
+    // PARAMENTERS: string name - the name of the repository
     public Repository(String name) {
-        if (name == null) {
+        if (name == null || name.equals("")) {
             throw new IllegalArgumentException();
         }
 
@@ -16,6 +30,11 @@ public class Repository {
         this.size = 0;
     }
 
+    // BEHVAIOR: returns the id of the latest commit in the repo
+    // EXCEPTIONS: none
+    // RETURNS: returns null if head == null, other wise returns
+    // head id
+    // PARAMETERS: none
     public String getRepoHead() {
         if (head == null) {
             return null;
@@ -24,18 +43,31 @@ public class Repository {
         return head.id;
     }
 
+    // BEHVAIOR: gets size of repo
+    // EXCEPTIONS: none
+    // RETURNS: returns size of the repo
+    // PARAMETERS: none
     public int getRepoSize() {
         return size;
     }
 
+    // BEHVAIOR: returns a string representation of repo
+    // EXCEPTIONS: none
+    // RETURNS: string representing the name of the repo and head/no commits
+    // PARAMETERS: none
     public String toString() {
         if (head != null) {
             return name + " - Current head: " + head.toString();
         }
 
-        return name + " - Current head: No commits";
+        return name + " - No commits";
     }
    
+    // BEHVAIOR: checks whether the repo contains a commit with given id
+    // EXCEPTIONS: IllegalArgumentException
+    //              if targetId == null
+    // RETURNS: boolean - true if commit with targetID exists, false otherwise
+    // PARAMETERS: String targetId = id of the target commit
     public boolean contains(String targetId) {
         if (targetId == null) {
             throw new IllegalArgumentException();
@@ -54,6 +86,12 @@ public class Repository {
         return false;
     }
 
+    // BEHVAIOR: returns summary of most recent commits
+    // EXCEPTIONS: IllegalArgumentException
+    //              if n <= 0
+    // RETURNS: returns string representing most recent n commits
+    // with no trailing newline.
+    // PARAMETERS: int n - number of commits to get
     public String getHistory(int n) {
         if (n <= 0) {
             throw new IllegalArgumentException();
@@ -78,6 +116,12 @@ public class Repository {
         return result;
     }
 
+    // BEHVAIOR: creates a new commit in the repository with given
+    // message.
+    // EXCEPTIONS: IllegalArgumentException
+    //              if message == null
+    // RETURNS: Returns id of the newly created commit.
+    // PARAMETERS: String message - message for commit
     public String commit(String message) {
         if (message == null) {
             throw new IllegalArgumentException();
@@ -90,7 +134,12 @@ public class Repository {
         return newCommit.id;
     }
 
-    public boolean drop(String targetId) {
+    // BEHVAIOR: removes the commit with given id from repo
+    // EXCEPTIONS: IllegalArgumentException
+    //              if targetId = null
+    // RETURNS: returns true if a commit 
+    // PARAMETERS: String targetId - id of the commit to drop
+    public boolean drop(String targetId) { 
         if (targetId == null) {
             throw new IllegalArgumentException();
         }
@@ -121,6 +170,12 @@ public class Repository {
         return false;
     }
 
+    // BEHVAIOR: combines current repo with another repo
+    // resulting in a unified commit history
+    // EXCEPTIONS: IllegalArgumentException
+    //              if other == null
+    // RETURNS: none
+    // PARAMETERS: repo other - the other repo to synch with
     public void synchronize(Repository other) {
         if (other == null) {
             throw new IllegalArgumentException();
