@@ -1,20 +1,35 @@
-import java.awt.Color;
+import java.awt.*;
 
 public class Client {
     public static void main(String[] args) {
-        // 1. Create a new picture with size 400 x 400
+        // 1. Create a new picture sized 400 x 400 pixels
         Picture picture = new Picture(400, 400);
-        // 2. Get the pixels out of the image
         Color[][] pixels = picture.getPixels();
-        // 3. Call fill, providing a specific region
-        fillRegion(pixels, 0, 250, 0, 320);
-        // 4. Set the pixels of the image
-        picture.setPixels(pixels);
-        // 5. Save the image to display it
+        // 2. Call divide divide canvas
+        divideCanvas(pixels, 2, 0, 400, 0, 400);
+        // 3. Save the image to display it
         picture.save("picture.jpg");
+        picture.setPixels(pixels);
     }
 
-    // TODO: Implement fill below (this solution can be iterative)
+    // TODO: Implement divideCanvas below using your 'fill' implementation
+    // from the previous slide
+    public static void divideCanvas(Color[][] pixels, int n, int x1, int x2, int y1, int y2) {
+        if (n == 0) {
+            fillRegion(pixels, x1, x2, y1, y2);
+            return;
+        } else {
+            int midX = (x2 + x1) / 2;
+            int midY = (y2 + y1) / 2;
+
+            divideCanvas(pixels, (n - 1), x1, midX, y1, midY);
+            divideCanvas(pixels, (n - 1), midX, x2, y1, midY);
+            divideCanvas(pixels, (n - 1), x1, midX, midY, y2);
+            divideCanvas(pixels, (n - 1), midX, x2, midY, y2);
+        }
+    }
+
+    // TODO: Paste in 'fill' from the previous slide
     public static void fillRegion(Color[][] pixels, int x1, int x2, int y1, int y2) {
         for (int i = (y1 + 1); i < (y2 - 1); i++) {
             for (int j = (x1 + 1); j < (x2 - 1); j++) {
