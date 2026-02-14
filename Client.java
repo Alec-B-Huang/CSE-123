@@ -16,14 +16,10 @@ public class Client {
 
     // TODO: Implement fill below (this solution can be iterative)
     public static void fillRegion(Color[][] pixels, int x1, int x2, int y1, int y2) {
-        for (int i = 0; i < (y2 - y1); i++) {
-
-            for (int j = 0; j < (x2 - x1); j++) {
-                int x = x1 + j;
-                int y = y1 + i;
-
+        for (int i = (y1 + 1); i < (y2 - 1); i++) {
+            for (int j = (x1 + 1); j < (x2 - 1); j++) {
                 Color white = new Color(255, 255, 255);
-                pixels[y][x] = white;
+                pixels[i][j] = white;
             }
         }
     }
