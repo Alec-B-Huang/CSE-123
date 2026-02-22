@@ -1,49 +1,143 @@
-import java.awt.*;
+import java.util.*;
 
+// A client class for creating scenarios (list of regions) and allocating relief to said regions.
 public class Client {
-    public static void main(String[] args) {
-        // 1. Create a new picture sized 400 x 400 pixels
-        Picture picture = new Picture(400, 400);
-        Color[][] pixels = picture.getPixels();
-        // 2. Call divide divide canvas
-        divideCanvas(pixels, 2);
-        // 3. Save the image to display it
-        picture.setPixels(pixels);
-        picture.save("picture.jpg");
+    private static final Random RAND = new Random();
+
+    public static void main(String[] args) throws Exception {
+        // List<Region> scenario = createRandomScenario(10, 10, 100, 1000, 100000);
+        List<Region> scenario = createSimpleScenario();
+        System.out.println(scenario);
+        
+        double budget = 2000;
+        Allocation allocation = allocateRelief(budget, scenario);
+        printResult(allocation, budget);
     }
 
-    // TODO: Implement divideCanvas below using your 'fill' implementation
-    // from the previous slide
-    public static void divideCanvas(Color[][] pixels, int n) {
-        int x1 = 0;
-        int y1 = 0;
-        int x2 = pixels[0].length;
-        int y2 = pixels.length;
-
-        divideCanvas(pixels, n, x1, x2, y1, y2);
-    }
-
-    private static void divideCanvas(Color[][] pixels, int n, int x1, int x2, int y1, int y2) {
-        if (n == 0) {
-            fillRegion(pixels, x1, x2, y1, y2);
-            return;
-        } else {
-            int midX = (x2 + x1) / 2;
-            int midY = (y2 + y1) / 2;
-
-            divideCanvas(pixels, (n - 1), x1, midX, y1, midY);
-            divideCanvas(pixels, (n - 1), midX, x2, y1, midY);
-            divideCanvas(pixels, (n - 1), x1, midX, midY, y2);
-            divideCanvas(pixels, (n - 1), midX, x2, midY, y2);
+    public static Allocation allocateRelief(double budget, List<Region> sites) {
+        if (sites == null) {
+            throw new IllegalArgumentException();
         }
+
+        Allocation currAllocation = new Allocation();
+        int index = 0;
+        if (sites.isEmpty() || budget == 0) {
+            return currAllocation;
+        }
+
+        currAllocation = recursiveHelper(sites, index, budget, currAllocation);
+        return currAllocation;
     }
 
-    // TODO: Paste in 'fill' from the previous slide
-    public static void fillRegion(Color[][] pixels, int x1, int x2, int y1, int y2) {
-        for (int i = (y1 + 1); i < (y2 - 1); i++) {
-            for (int j = (x1 + 1); j < (x2 - 1); j++) {
-                pixels[i][j] = Color.WHITE;
+    private static Allocation recursiveHelper(List<Region> sites, int index, 
+                                            double remainingBudget, Allocation currAllocation) {
+        if (index == sites.size()) {
+            return currAllocation;
+        }
+
+        Region region = sites.get(index);
+        Allocation excludeResult = recursiveHelper(sites, index + 1, remainingBudget, currAllocation);
+        Allocation newAllocation = currAllocation.withRegion(region);
+
+        if (region.getCost() <= remainingBudget) {
+            Allocation includeResult = recursiveHelper(sites, index + 1, remainingBudget - region.getCost(), newAllocation);
+
+            if (excludeResult.totalPeople() > includeResult.totalPeople()) {
+                return excludeResult;
+
+            } else if (excludeResult.totalPeople() < includeResult.totalPeople()) {
+                return includeResult;
+
+            } else if (excludeResult.totalPeople() == includeResult.totalPeople()) {
+
+                if (excludeResult.totalCost() < includeResult.totalCost()) {
+                    return excludeResult;
+
+                } else {
+                    return includeResult;
+                }
             }
+
         }
+        return excludeResult;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // PROVIDED HELPER METHODS - **DO NOT MODIFY ANYTHING BELOW THIS LINE!** //
+    ///////////////////////////////////////////////////////////////////////////
+    
+    /**
+    * Prints each allocation in the provided set. Useful for getting a quick overview
+    * of all allocations currently in the system.
+    * @param allocations Set of allocations to print
+    */
+    public static void printAllocations(Set<Allocation> allocations) {
+        System.out.println("All Allocations:");
+        for (Allocation a : allocations) {
+            System.out.println("  " + a);
+        }
+    }
+
+    /**
+    * Prints details about a specific allocation result, including the total people
+    * helped, total cost, and any leftover budget. Handy for checking if we're
+    * within budget limits!
+    * @param alloc The allocation to print
+    * @param budget The budget to compare against
+    */
+    public static void printResult(Allocation alloc, double budget) {
+        System.out.println("Result: ");
+        System.out.println("  " + alloc);
+        System.out.println("  People helped: " + alloc.totalPeople());
+        System.out.printf("  Cost: $%.2f\n", alloc.totalCost());
+        System.out.printf("  Unused budget: $%.2f\n", (budget - alloc.totalCost()));
+    }
+
+    /**
+    * Creates a scenario with numRegions regions by randomly choosing the population 
+    * and cost of each region.
+    * @param numRegions Number of regions to create
+    * @param minPop Minimum population per region
+    * @param maxPop Maximum population per region
+    * @param minCostPer Minimum cost per person
+    * @param maxCostPer Maximum cost per person
+    * @return A list of randomly generated regions
+    */
+    public static List<Region> createRandomScenario(int numRegions, int minPop, int maxPop,
+                                                    double minCostPer, double maxCostPer) {
+        List<Region> result = new ArrayList<>();
+
+        for (int i = 0; i < numRegions; i++) {
+            int pop = RAND.nextInt(maxPop - minPop + 1) + minPop;
+            double cost = (RAND.nextDouble(maxCostPer - minCostPer) + minCostPer) * pop;
+            result.add(new Region("Region #" + i, pop, round2(cost)));
+        }
+
+        return result;
+    }
+
+    /**
+    * Manually creates a simple list of regions to represent a known scenario.
+    * @return A simple list of regions
+    */
+    public static List<Region> createSimpleScenario() {
+        List<Region> result = new ArrayList<>();
+
+        result.add(new Region("Region #1", 50, 500));
+        result.add(new Region("Region #2", 100, 700));
+        result.add(new Region("Region #3", 60, 1000));
+        result.add(new Region("Region #4", 20, 1000));
+        result.add(new Region("Region #5", 200, 900));
+
+        return result;
+    }    
+
+    /**
+    * Rounds a number to two decimal places.
+    * @param num The number to round
+    * @return The number rounded to two decimal places
+    */
+    private static double round2(double num) {
+        return Math.round(num * 100) / 100.0;
     }
 }
