@@ -1,3 +1,9 @@
+// ALEC HUANG
+// CSE 123
+// 02/22/26
+// P2
+// TA: ISHTA MUNDRA
+
 import java.util.*;
 
 // A client class for creating scenarios (list of regions) and allocating relief to said regions.
@@ -14,6 +20,14 @@ public class Client {
         printResult(allocation, budget);
     }
 
+    // BEHAVIOR: Returns the optimal allocation of relief funds across the given region
+    //           whilst maximizing the amount of people helped. If regions have the same people
+    //           the one with the lower cost is prefered.
+    // EXCEPTIONS: IllegalArgumentException if
+    //              sites is null
+    // RETURNS: Allocation that contains the best set of regions to send relief to.
+    // PARAMETERS: double budget: budget to spend for relief
+    //             List<Region> sites: the list of sites that need relief.
     public static Allocation allocateRelief(double budget, List<Region> sites) {
         if (sites == null) {
             throw new IllegalArgumentException();
@@ -29,6 +43,15 @@ public class Client {
         return currAllocation;
     }
 
+    // BEHAVIOR: Recursively explores different possible allocations from the given regions
+    //           and returns the most optimal allocation from current position.
+    //           returned allocation maximizes people helped with remaining budget.
+    // EXCEPTIONS: none
+    // RETURNS: returns the best allocation achievable from current index forward.
+    // PARAMETERS: List<Region> sites: the list of sites to be considered
+    //             int index: current position in list
+    //             double remainingBudget: remaining budget to spend for relief
+    //             Allocation currAllocation: allocation made so far
     private static Allocation recursiveHelper(List<Region> sites, int index, 
                                             double remainingBudget, Allocation currAllocation) {
         if (index == sites.size()) {
@@ -36,11 +59,13 @@ public class Client {
         }
 
         Region region = sites.get(index);
-        Allocation excludeResult = recursiveHelper(sites, index + 1, remainingBudget, currAllocation);
+        Allocation excludeResult = recursiveHelper(sites, index + 1, remainingBudget,
+                                                                                 currAllocation);
         Allocation newAllocation = currAllocation.withRegion(region);
 
         if (region.getCost() <= remainingBudget) {
-            Allocation includeResult = recursiveHelper(sites, index + 1, remainingBudget - region.getCost(), newAllocation);
+            Allocation includeResult = recursiveHelper(sites, index + 1, 
+                                            remainingBudget - region.getCost(), newAllocation);
 
             if (excludeResult.totalPeople() > includeResult.totalPeople()) {
                 return excludeResult;
