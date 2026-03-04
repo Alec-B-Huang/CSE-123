@@ -7,9 +7,17 @@
 import java.io.*;
 import java.util.*;
 
+// Class comment: Represents a text classifier as a binary decision tree.
 public class Classifier {
     private ClassifierNode root;
 
+    // BEHAVIOR: Constructs classifier
+    // EXCEPTIONS: IllegalArgumentException
+    //                  if input == null
+    //             IllegalStateException
+    //                  if root == null
+    // RETURNS: none
+    // PARAMETERS: input: scanner connected to a file containing saved classifier
     public Classifier(Scanner input) {
        if (input == null) {
         throw new IllegalArgumentException();
@@ -21,6 +29,11 @@ public class Classifier {
        }
     }
 
+    // BEHAVIOR: loads nodes of classifier tree from input.
+    // EXCEPTIONS: IllegalStateException
+    //              if (!input.hasNextLine)
+    // RETURNS: root node of loaded subtree
+    // PARAMETERS: input: scanner with saved classifier data.
     private ClassifierNode loadHelper(Scanner input) {
         if (!input.hasNextLine()) {
             throw new IllegalStateException();
@@ -42,6 +55,15 @@ public class Classifier {
         return new ClassifierNode(line, null);
     }
 
+    // BEHAVIOR: constructs and trains classifier
+    // EXCEPTIONS: IllegalArgumentException 
+    //              if data == null
+    //              if labels == null
+    //              if data.size() != labels.size()
+    //              if data.isEmpty
+    // RETURNS: none
+    // PARAMETERS: data: list of TextBlock objects for training
+    //             labels: list of labels for each textBlock
     public Classifier(List<TextBlock> data, List<String> labels) {
         if (data == null || labels == null || data.size() != labels.size() || data.isEmpty()) {
             throw new IllegalArgumentException();
@@ -54,6 +76,11 @@ public class Classifier {
         }
     }
 
+    // BEHAVIOR: Classifies textblock and returns label
+    // EXCEPTIONS: IllegalArgumentException 
+    //              if input == null
+    // RETURNS: label predicted by classifier
+    // PARAMETERS: input: Textblock to classify
     public String classify(TextBlock input) {
         if (input == null) {
             throw new IllegalArgumentException();
@@ -64,6 +91,12 @@ public class Classifier {
 
         return resultNode;
     }
+
+    // BEHAVIOR: traverses classifier tree to determine label
+    // EXCEPTIONS: none
+    // RETURNS: predicted label
+    // PARAMETERS: node: current node being examined
+    //             input: textblock being classified
     private String classifyHelper(ClassifierNode node, TextBlock input) {
         if (node.isLeaf()) {
             return node.label;
@@ -83,6 +116,11 @@ public class Classifier {
         }
     }
 
+    // BEHAVIOR: Writes current classifier tree to printstream
+    // EXCEPTIONS: IllegalArgumentException
+    //                  if output == null
+    // RETURNS: none
+    // PARAMETERS: output: Printstream where classifier is saved
     public void save(PrintStream output) {
         if (output == null) {
             throw new IllegalArgumentException();
@@ -91,6 +129,11 @@ public class Classifier {
         saveHelper(root, output);
     }
 
+    // BEHAVIOR: writes nodes of tree to output
+    // EXCEPTIONS: none
+    // RETURNS: none
+    // PARAMETERS: node: the current node being written
+    //             output: the printStream where classifier is saved
     private void saveHelper(ClassifierNode node, PrintStream output) {
         if (node.isLeaf()) {
             output.println(node.label);
@@ -104,6 +147,12 @@ public class Classifier {
         }
     }
 
+    // BEHAVIOR: updates classifier tree using label and example.
+    // EXCEPTIONS: none
+    // RETURNS:
+    // PARAMETERS: node: current node being examined
+    //             block: training textBlock
+    //.            trueLabel: correct label for training example
     private ClassifierNode trainTree(ClassifierNode node, TextBlock block, String trueLabel) {
             if (node.isLeaf()) {
                 if (node.label.equals(trueLabel)) {
@@ -159,6 +208,7 @@ public class Classifier {
             return node;
         }
 
+    // Class Comment: represents a single node in the decision tree
     private static class ClassifierNode {
         public ClassifierNode left;
         public ClassifierNode right;
@@ -167,6 +217,11 @@ public class Classifier {
         public final String featureWord;
         public final double threshold;
 
+        // BEHAVIOR: creates leaf node
+        // EXCEPTIONS: none
+        // RETURNS: none
+        // PARAMETERS: label: label stored in leaf
+        //             trainedExample: the training example associated with label
         private ClassifierNode(String label, TextBlock trainedExample) {
             this.label = label;
             this.left = null;
@@ -176,6 +231,13 @@ public class Classifier {
             this.threshold = 0;
         }
 
+        // BEHAVIOR: creates decision node based on feature and threshold
+        // EXCEPTIONS: none
+        // RETURNS: none
+        // PARAMETERS: featureWord: feature to be used for decision
+        //             left: left child in tree
+        //             right: right child in tree
+        //             threshod: value used to decide which branch to follow
         private ClassifierNode(String featureWord, ClassifierNode left, ClassifierNode right, 
                                                                             double threshold) {
             this.featureWord = featureWord;
@@ -186,6 +248,10 @@ public class Classifier {
             this.trainedExample = null;
         }
 
+        // BEHAVIOR: Checks if node is a leaf node
+        // EXCEPTIONS: none
+        // RETURNS: true if node is label
+        // PARAMETERS: none
         private boolean isLeaf() {
             return featureWord == null;
         }
